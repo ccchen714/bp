@@ -2,23 +2,63 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <!-- 關鍵：讓網頁自適應手機螢幕寬度，字體不縮小 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的文字個人網站</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 500px;      /* 限制最大寬度，電腦看也舒適 */
+            margin: 20px auto;     /* 居中對齊 */
+            padding: 0 20px;       /* 左右留白，避免字貼到手機邊緣 */
+            line-height: 1.8;      /* 加大行距，更好閱讀 */
+            font-size: 18px;       /* 放大基礎字體 */
+            color: #333;           /* 使用深灰色，比純黑更溫和 */
+        }
+        h1 {
+            font-size: 26px;       /* 放大標題 */
+            margin-top: 20px;
+        }
+        /* 優化手機選單：加大連結範圍，方便手指點擊 */
+        nav p {
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        nav a {
+            display: inline-block;
+            padding: 5px 8px;
+            margin: 2px 0;
+            color: #0066cc;
+            text-decoration: none; /* 拿掉底線，看起來更乾淨 */
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline; /* 手指碰觸或滑鼠移過時才顯示底線 */
+        }
+        hr {
+            border: 0;
+            border-top: 1px solid #ccc;
+            margin: 25px 0;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- 這裡是最新的導覽選單功能 -->
+    <!-- 網站導覽選單 -->
     <nav>
         <p>
-            <strong>網站地圖：</strong>
-            <a href="index.html">首頁</a> | 
-            <a href="bp.html">點我進入 📊 每日血壓記錄簿</a>
+            <strong>網站地圖：</strong><br> <!-- 手機版加個換行，排版更美觀 -->
+            <a href="index.html">🏠 首頁</a> | 
+            <a href="bp.html">📊 血壓記錄簿</a> | 
         </p>
     </nav>
     
-    <hr> <!-- 畫一條分隔線 -->
+    <hr>
 
     <h1>歡迎來到我的簡單網站</h1>
-    <p>這是一個完全只有文字的靜態網頁。你可以透過上方的選單觀看我分享的檔案。</p>
+    <p>這是一個完全只有文字的靜態網頁。你可以透過上方的選單觀看我分享的檔案，或是使用我製作的血壓記錄小工具。</p>
 
 </body>
 </html>
