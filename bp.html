@@ -2,25 +2,58 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <!-- 關鍵：這一行可以讓網頁在手機上正常縮放，字體不會縮小 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>每日血壓記錄簿</title>
     <style>
-        body { font-family: sans-serif; max-width: 500px; margin: 20px auto; padding: 0 10px; line-height: 1.6; }
-        .input-group { margin-bottom: 10px; }
-        label { display: inline-block; width: 100px; }
-        input { padding: 5px; width: 100px; }
-        button { padding: 5px 15px; margin-right: 5px; cursor: pointer; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-        th { background-color: #f2f2f2; }
+        body { 
+            font-family: sans-serif; 
+            max-width: 500px; 
+            margin: 20px auto; 
+            padding: 0 15px; 
+            line-height: 1.6; 
+            /* 放大基礎字體，讓手機更好閱讀 */
+            font-size: 18px; 
+        }
+        h2 { font-size: 26px; }
+        h3 { font-size: 22px; margin-top: 30px; }
+        
+        /* 放大輸入框與標籤，方便手指點選 */
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { 
+            padding: 10px; 
+            width: 100%; 
+            max-width: 200px; 
+            font-size: 18px; 
+            box-sizing: border-box;
+        }
+        
+        /* 放大按鈕，更適合觸控 */
+        button { 
+            padding: 12px 20px; 
+            margin-top: 10px;
+            margin-right: 5px; 
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer; 
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .btn-save { background-color: #4CAF50; color: white; border: none; }
         .btn-danger { background-color: #ff4d4d; color: white; border: none; }
+        
+        /* 表格優化，在手機上不擁擠 */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 16px; }
+        th, td { border: 1px solid #ccc; padding: 12px 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
     </style>
 </head>
 <body>
 
     <h2>📊 每日血壓記錄簿</h2>
     
-    <!-- 回到首頁的導覽連結 -->
-    <p><a href="index.html">⬅ 回到網站首頁</a></p>
+    <p><a href="index.html" style="font-size: 16px;">⬅ 回到網站首頁</a></p>
 
     <!-- 輸入介面 -->
     <div class="input-group">
@@ -31,17 +64,17 @@
         <label for="dia">舒張壓 (低壓):</label>
         <input type="number" id="dia" placeholder="例如 80"> mmHg
     </div>
-    <button onclick="saveData()">儲存紀錄</button>
+    <button class="btn-save" onclick="saveData()">儲存紀錄</button>
     <button class="btn-danger" onclick="clearData()">清除所有紀錄</button>
 
     <!-- 歷史紀錄表格 -->
-    <h3>📋 歷史紀錄 (儲存於本機瀏覽器)</h3>
+    <h3>📋 歷史紀錄</h3>
     <table>
         <thead>
             <tr>
                 <th>時間</th>
-                <th>收縮壓 (高壓)</th>
-                <th>舒張壓 (低壓)</th>
+                <th>高壓</th>
+                <th>低壓</th>
             </tr>
         </thead>
         <tbody id="recordTable">
@@ -50,12 +83,10 @@
     </table>
 
     <script>
-        // 頁面載入時，自動讀取並顯示舊資料
         window.onload = function() {
             displayRecords();
         };
 
-        // 儲存資料的函式
         function saveData() {
             const sysInput = document.getElementById('sys').value;
             const diaInput = document.getElementById('dia').value;
@@ -65,51 +96,42 @@
                 return;
             }
 
-            // 取得現在時間
             const now = new Date();
-            const timeString = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            // 為了讓手機表格不塞爆，簡化時間格式顯示（只顯示 月/日 時:分）
+            const timeString = `${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
-            // 建立一筆新物件
             const newRecord = {
                 time: timeString,
                 sys: sysInput,
                 dia: diaInput
             };
 
-            // 從 LocalStorage 撈出舊陣列，若沒有就建立新陣列
             let records = JSON.parse(localStorage.getItem('bpRecords')) || [];
-            
-            // 把新紀錄推入陣列頂端（最新顯示在最前面）
             records.unshift(newRecord);
-
-            // 存回 LocalStorage
             localStorage.setItem('bpRecords', JSON.stringify(records));
 
-            // 清空輸入框並重新整理表格
             document.getElementById('sys').value = '';
             document.getElementById('dia').value = '';
             displayRecords();
         }
 
-        // 顯示資料的函式
         function displayRecords() {
             const records = JSON.parse(localStorage.getItem('bpRecords')) || [];
             const tbody = document.getElementById('recordTable');
-            tbody.innerHTML = ''; // 先清空表格
+            tbody.innerHTML = ''; 
 
             records.forEach(function(item) {
                 const row = `<tr>
                     <td>${item.time}</td>
-                    <td>${item.sys} mmHg</td>
-                    <td>${item.dia} mmHg</td>
+                    <td><strong>${item.sys}</strong></td>
+                    <td><strong>${item.dia}</strong></td>
                 </tr>`;
                 tbody.innerHTML += row;
             });
         }
 
-        // 清除所有資料的函式
         function clearData() {
-            if (confirm('確定要刪除所有血壓紀錄嗎？此操作無法復原。')) {
+            if (confirm('確定要刪除所有血壓紀錄嗎？')) {
                 localStorage.removeItem('bpRecords');
                 displayRecords();
             }
