@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的每日待辦清單</title>
+    <style>
+        body { 
+            font-family: sans-serif; 
+            max-width: 500px; 
+            margin: 20px auto; 
+            padding: 0 15px; 
+            line-height: 1.6; 
+            font-size: 18px; 
+            color: #333;
+        }
+        h2 { font-size: 26px; }
+        
+        /* 輸入區塊排版 */
+        .input-group { 
+            display: flex; 
+            margin-bottom: 20px; 
+        }
+        input { 
+            flex: 1; 
+            padding: 12px; 
+            font-size: 18px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px 0 0 5px; 
+            box-sizing: border-box;
+        }
+        .btn-add { 
+            padding: 12px 20px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            background-color: #0066cc; 
+            color: white; 
+            border: none; 
+            border-radius: 0 5px 5px 0; 
+            cursor: pointer; 
+        }
+        
+        /* 清單列表排版 */
+        ul { list-style: none; padding: 0; }
+        li { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 12px; 
+            margin-bottom: 8px; 
+            background-color: #f8f9fa; 
+            border: 1px solid #e9ecef; 
+            border-radius: 5px; 
+        }
+        
+        /* 已完成項目的刪除線樣式 */
+        .completed { 
+            text-decoration: line-through; 
+            color: #888; 
+        }
+        
+        .todo-text { 
+            flex: 1; 
+            margin-left: 10px; 
+            cursor: pointer; 
+        }
+        
+        /* 刪除按鈕 */
+        .btn-delete { 
+            background-color: #ff4d4d; 
+            color: white; 
+            border: none; 
+            padding: 6px 12px; 
+            font-size: 14px; 
+            border-radius: 3px; 
+            cursor: pointer; 
+        }
+    </style>
+</head>
+<body>
+
+    <h2>📝 每日待辦清單</h2>
+    <p><a href="index.html" style="font-size: 16px;">⬅ 回到網站首頁</a></p>
+
+    <!-- 輸入介面 -->
+    <div class="input-group">
+        <input type="text" id="todoInput" placeholder="輸入今天要做的事...">
+        <button class="btn-add" onclick="addTodo()">新增</button>
+    </div>
+
+    <!-- 待辦事項列表 -->
+    <ul id="todoList">
+        <!-- 項目會動態顯示在這裡 -->
+    </ul>
+
+    <script>
+        // 頁面載入時讀取資料
+        window.onload = function() {
+            displayTodos();
+        };
+
+        // 新增待辦事項
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+
+            if (!text) {
+                alert('請輸入內容！');
+                return;
+            }
+
+            const newTodo = {
+                id: Date.now(), // 用時間當作唯一身份識別標籤
+                text: text,
+                completed: false // 預設為未完成
+            };
+
+            let todos = JSON.parse(localStorage.getItem('myTodos')) || [];
+            todos.push(newTodo);
+            localStorage.setItem('myTodos', JSON.stringify(todos));
+
+            input.value = ''; // 清空輸入框
+            displayTodos();
+        }
+
+        // 顯示待辦事項
+        function displayTodos() {
+            const todos = JSON.parse(localStorage.getItem('myTodos')) || [];
+            const list = document.getElementById('todoList');
+            list.innerHTML = ''; // 先清空列表
+
+            todos.forEach(function(item) {
+                const li = document.createElement('li');
+                
+                // 根據完成狀態決定是否加上 completed 樣式
+                const textClass = item.completed ? 'todo-text completed' : 'todo-text';
+                const checked = item.completed ? 'checked' : '';
+
+                li.innerHTML = `
+                    <input type="checkbox" ${checked} onclick="toggleTodo(${item.id})">
+                    <span class="${textClass}" onclick="toggleTodo(${item.id})">${item.text}</span>
+                    <button class="btn-delete" onclick="deleteTodo(${item.id})">刪除</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        // 切換完成/未完成狀態
+        function toggleTodo(id) {
+            let todos = JSON.parse(localStorage.getItem('myTodos')) || [];
+            todos = todos.map(function(item) {
+                if (item.id === id) {
+                    item.completed = !item.completed; // 反轉狀態
+                }
+                return item;
+            });
+            localStorage.setItem('myTodos', JSON.stringify(todos));
+            displayTodos();
+        }
+
+        // 刪除單一項目
+        function deleteTodo(id) {
+            let todos = JSON.parse(localStorage.getItem('myTodos')) || [];
+            // 過濾掉被刪除的那個 id
+            todos = todos.filter(item => item.id !== id);
+            localStorage.setItem('myTodos', JSON.stringify(todos));
+            displayTodos();
+        }
+    </script>
+</body>
+</html>
