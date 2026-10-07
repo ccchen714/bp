@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雲端血壓記錄簿</title>
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 20px auto; padding: 0 15px; line-height: 1.6; font-size: 18px; color: #333; }
+        h2 { font-size: 26px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { padding: 12px; width: 100%; max-width: 200px; font-size: 18px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 12px 20px; margin-top: 10px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 5px; border: none; background-color: #007bff; color: white; width: 100%; }
+        .success-msg { display: none; color: #28a745; background-color: #d4edda; padding: 12px; border-radius: 5px; margin-top: 15px; text-align: center; font-weight: bold; }
+        /* 隱藏用來接接收表單提交的隱形視窗 */
+        #hidden_iframe { display: none; }
+    </style>
+</head>
+<body>
+
+    <h2>☁️ 雲端血壓記錄簿</h2>
+    <p><a href="index.html" style="font-size: 16px;">⬅ 回到網站首頁</a></p>
+
+    <!-- 請將下面的 action 網址，替換成你在步驟 2 找到的表單 formResponse 網址 -->
+    <form action="https://docs.google.com/forms/d/e/1FAIpQLScvjVVsFfK114tV4u0i-SjHU-cErRO4quzwYNcLweBZRIXW8w" 
+          method="POST" 
+          target="hidden_iframe" 
+          onsubmit="showSuccess()">
+
+        <!-- 輸入介面：請將下面的 name 屬性，替換成你在步驟 2 找到的 entry 數字 -->
+        <div class="input-group">
+            <label for="sys">收縮壓 (高壓):</label>
+            <input type="number" name="entry.803764793" id="sys" placeholder="例如 120" required> mmHg
+        </div>
+        
+        <div class="input-group">
+            <label for="dia">舒張壓 (低壓):</label>
+            <input type="number" name="entry.1773203355" id="dia" placeholder="例如 80" required> mmHg
+        </div>
+
+        <button type="submit">確認送出至雲端</button>
+    </form>
+
+    <!-- 成功提示框 -->
+    <div id="successMsg" class="success-msg">🎉 資料已成功同步至 Google 試算表！</div>
+
+    <!-- 關鍵：防止網頁跳轉到 Google 表單提交成功頁面的隱形視窗 -->
+    <iframe name="hidden_iframe" id="hidden_iframe"></iframe>
+
+    <script>
+        function showSuccess() {
+            // 顯示成功訊息
+            const msg = document.getElementById('successMsg');
+            msg.style.display = 'block';
+            
+            // 清空輸入框
+            document.getElementById('sys').value = '';
+            document.getElementById('dia').value = '';
+            
+            // 3秒後自動隱藏成功訊息
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
